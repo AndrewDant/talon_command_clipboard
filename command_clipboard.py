@@ -14,8 +14,8 @@ def gui(gui: imgui.GUI):
     for command in command_clipboard:
         text = actions.user.history_transform_phrase_text(command)
         if text is not None and gui.button(text):
-            actions.user.history_clipboard_repeat(command)
-            actions.user.history_clipboard_disable()
+            actions.user.command_clipboard_repeat(command)
+            actions.user.command_clipboard_disable()
 
 
 
@@ -29,23 +29,23 @@ speech_system.register("pre:phrase", fn)
 
 @mod.action_class
 class Actions:
-    def history_clipboard_toggle():
-        """Toggles viewing the history clipboard"""
+    def command_clipboard_toggle():
+        """Toggles viewing the command clipboard"""
         if gui.showing:
             gui.hide()
         else:
             gui.show()
 
-    def history_clipboard_disable():
-        """Disables the history clipboard"""
+    def command_clipboard_disable():
+        """Disables the command clipboard"""
         gui.hide()
 
-    def history_clipboard_repeat(words: List[str]):
+    def command_clipboard_repeat(words: List[str]):
         """Repeat the chosen command"""
         actions.mimic(words)
 
     def history_append_command(words: List[str]):
-        """Appends a command to the current history_clipboard; called when a voice command is uttered"""
+        """Appends a command to the command clipboard; called when a voice command is uttered"""
         command_clipboard.append(words)
         if len(command_clipboard) > MAX_LENGTH:
             command_clipboard.pop(0)

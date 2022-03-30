@@ -1,1 +1,1 @@
-command clipboard: user.history_clipboard_toggle()
+command clipboard: user.command_clipboard_toggle()
