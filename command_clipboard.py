@@ -11,16 +11,17 @@ def gui(gui: imgui.GUI):
     global command_clipboard
     gui.text("Command Clipboard")
     gui.line()
+    index = 0
     for command in command_clipboard:
-        text = actions.user.history_transform_phrase_text(command)
-        if text is not None and gui.button(text):
+        text = actions.user.command_clipboard_transform_phrase_text(command)
+        index += 1
+        if text is not None and gui.button('{}. {}'.format(index, text)):
             actions.user.command_clipboard_repeat(command)
             actions.user.command_clipboard_disable()
 
 
-
 def fn(d):
-    if "parsed" not in d: return
+    if "parsed" not in d or not actions.speech.enabled(): return
     actions.user.history_append_command(d["parsed"]._unmapped)
 
 
@@ -49,4 +50,8 @@ class Actions:
         command_clipboard.append(words)
         if len(command_clipboard) > MAX_LENGTH:
             command_clipboard.pop(0)
-        print(command_clipboard)
+
+    def command_clipboard_transform_phrase_text(words: list[str]) -> Optional[str]:
+        """Transforms phrase text for presentation in command clipboard. Return `None` to omit from history"""
+
+        return ' '.join(words) if words else None
