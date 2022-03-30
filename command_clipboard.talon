@@ -1,0 +1,1 @@
+command clipboard: user.history_clipboard_toggle()
