@@ -16,7 +16,7 @@ def gui(gui: imgui.GUI):
         text = actions.user.command_clipboard_transform_phrase_text(command)
         index += 1
         if text is not None and gui.button('{}. {}'.format(index, text)):
-            actions.user.command_clipboard_repeat(command)
+            actions.user.command_clipboard_repeat_command(command)
             actions.user.command_clipboard_disable()
 
 
@@ -30,6 +30,10 @@ speech_system.register("pre:phrase", fn)
 
 @mod.action_class
 class Actions:
+    def command_clipboard_disable():
+        """Disables the command clipboard"""
+        gui.hide()
+
     def command_clipboard_toggle():
         """Toggles viewing the command clipboard"""
         if gui.showing:
@@ -37,13 +41,16 @@ class Actions:
         else:
             gui.show()
 
-    def command_clipboard_disable():
-        """Disables the command clipboard"""
-        gui.hide()
-
-    def command_clipboard_repeat(words: List[str]):
+    def command_clipboard_repeat_command(words: List[str]):
         """Repeat the chosen command"""
         actions.mimic(words)
+
+    # TODO should this work when the pop up isn't open?
+    def command_clipboard_repeat_number(number: int):
+        """Repeat the command with the specified number"""
+        if 0 <= number < len(command_clipboard):
+            actions.user.command_clipboard_repeat_command(command_clipboard[number - 1])
+            actions.user.command_clipboard_disable()
 
     def history_append_command(words: List[str]):
         """Appends a command to the command clipboard; called when a voice command is uttered"""
