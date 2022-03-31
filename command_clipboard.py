@@ -45,18 +45,18 @@ class Actions:
         """Repeat the chosen command"""
         actions.mimic(words)
 
-    # TODO should this work when the pop up isn't open?
     def command_clipboard_repeat_number(number: int):
         """Repeat the command with the specified number"""
-        if 0 <= number < len(command_clipboard):
-            actions.user.command_clipboard_repeat_command(command_clipboard[number - 1])
+        if 0 < number < len(command_clipboard):
+            # we don't subtract one from the number to get the index because the clip command becomes the new index 0
+            actions.user.command_clipboard_repeat_command(command_clipboard[number])
             actions.user.command_clipboard_disable()
 
     def history_append_command(words: List[str]):
         """Appends a command to the command clipboard; called when a voice command is uttered"""
-        command_clipboard.append(words)
+        command_clipboard.insert(0, words)
         if len(command_clipboard) > MAX_LENGTH:
-            command_clipboard.pop(0)
+            command_clipboard.pop()
 
     def command_clipboard_transform_phrase_text(words: list[str]) -> Optional[str]:
         """Transforms phrase text for presentation in command clipboard. Return `None` to omit from history"""
