@@ -21,8 +21,8 @@ def gui(gui: imgui.GUI):
 
 
 def fn(d):
-    if "parsed" not in d or not actions.speech.enabled(): return
-    actions.user.history_append_command(d["parsed"]._unmapped)
+    if "text" not in d or not actions.speech.enabled(): return
+    actions.user.history_append_command(d["text"])
 
 
 speech_system.register("pre:phrase", fn)
