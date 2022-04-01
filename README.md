@@ -24,8 +24,8 @@ There is also a command to close the clipboard early:
 'command clipboard close'
 
 # Working Items
-Configurable list size
-
 Configurable automatic closing (could allow this to act as an alternate command history)
 
 Ignore duplicate commands?
+
+It causes a recursion error when we try to repeat a clip command, we either need a work around or way to filter them from the list

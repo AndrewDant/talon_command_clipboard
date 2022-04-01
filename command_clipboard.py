@@ -4,7 +4,12 @@ from talon import actions, Module, speech_system, imgui
 mod = Module()
 
 command_clipboard = []
-MAX_LENGTH = 10
+setting_max_length = mod.setting(
+    "command_clipboard_max_length",
+    type=int,
+    default=10,
+    desc="the maximum number of items to record and display in the command clipboard",
+)
 
 @imgui.open(y=0, x=0)
 def gui(gui: imgui.GUI):
@@ -55,7 +60,7 @@ class Actions:
     def history_append_command(words: List[str]):
         """Appends a command to the command clipboard; called when a voice command is uttered"""
         command_clipboard.insert(0, words)
-        if len(command_clipboard) > MAX_LENGTH:
+        if len(command_clipboard) > setting_max_length.get():
             command_clipboard.pop()
 
     def command_clipboard_transform_phrase_text(words: list[str]) -> Optional[str]:
