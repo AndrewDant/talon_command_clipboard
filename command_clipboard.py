@@ -28,9 +28,9 @@ setting_x_position = mod.setting(
 
 setting_auto_close = mod.setting(
     "command_clipboard_auto_close",
-    type=bool,
-    default=True,
-    desc="whether or not the clipboard should automatically close when a command is selected",
+    type=int,
+    default=1,
+    desc="whether or not the clipboard should automatically close when a command is selected. 0 for false, any other number for true",
 )
 
 @imgui.open(y=setting_y_position.get(), x=setting_x_position.get())
