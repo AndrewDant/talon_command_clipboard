@@ -12,6 +12,20 @@ setting_max_length = mod.setting(
     desc="the maximum number of items to record and display in the command clipboard",
 )
 
+setting_y_position = mod.setting(
+    "command_clipboard_y_position",
+    type=int,
+    default=0,
+    desc="the y position of where to display the clipboard. 0 (the default) is the top of the screen",
+)
+
+setting_x_position = mod.setting(
+    "command_clipboard_x_position",
+    type=int,
+    default=0,
+    desc="the x position of where to display the clipboard. 0 (the default) is the far left of the screen",
+)
+
 setting_auto_close = mod.setting(
     "command_clipboard_auto_close",
     type=bool,
@@ -19,7 +33,7 @@ setting_auto_close = mod.setting(
     desc="whether or not the clipboard should automatically close when a command is selected",
 )
 
-@imgui.open(y=0, x=0)
+@imgui.open(y=setting_y_position.get(), x=setting_x_position.get())
 def gui(gui: imgui.GUI):
     global command_clipboard
     gui.text("Command Clipboard")
