@@ -80,6 +80,18 @@ class Actions:
             actions.user.command_clipboard_repeat_command(command_clipboard[number])
             if setting_auto_close.get():
                 actions.user.command_clipboard_disable()
+                
+    def command_clipboard_repeat_range(range_start: int, range_end: int):
+        """Repeat a range of commands from the clipboard"""
+        if 0 < range_start < len(command_clipboard) and 0 < range_end < len(command_clipboard):
+            if range_start > range_end:
+                temporary_array = command_clipboard[range_end:range_start + 1]
+                temporary_array.reverse()
+            else:
+                temporary_array = command_clipboard[range_start:range_end + 1]
+            
+            for command in temporary_array:
+                actions.user.command_clipboard_repeat_command(command)
 
     def history_append_command(words: List[str]):
         """Appends a command to the command clipboard; called when a voice command is uttered"""
