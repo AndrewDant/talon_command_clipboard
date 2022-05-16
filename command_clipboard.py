@@ -4,6 +4,7 @@ from talon import actions, Module, speech_system, imgui
 mod = Module()
 
 command_clipboard = []
+macro = []
 
 setting_max_length = mod.setting(
     "command_clipboard_max_length",
@@ -91,6 +92,24 @@ class Actions:
                 temporary_array = command_clipboard[range_start:range_end + 1]
             
             for command in temporary_array:
+                actions.user.command_clipboard_repeat_command(command)
+                
+    def command_clipboard_repeat_multi(number_list: List[int]):
+        """Repeat any number of commands from the clipboard in the order that they were given"""
+        if all(0 < index < len(command_clipboard) for index in number_list):
+            command_list = [command_clipboard[index] for index in number_list]
+            for command in command_list:
+                actions.user.command_clipboard_repeat_command(command)
+                
+    def command_clipboard_record_macro(number_list: List[int]):
+        """Save any number of commands from the clipboard into a macro to replay later"""
+        global macro
+        if all(0 < index < len(command_clipboard) for index in number_list):
+            macro = [command_clipboard[index] for index in number_list]
+
+    def command_clipboard_play_macro():
+        """Replay the recorded macro"""
+        for command in macro:
                 actions.user.command_clipboard_repeat_command(command)
 
     def history_append_command(words: List[str]):
