@@ -1,5 +1,5 @@
 # talon_command_clipboard
-Imitates the functionality of windows clipboard history for repeating talon commands.
+Imitates the functionality of windows clipboard history for repeating talon commands. Can also be used as an alternate form of command history, or to easily repeat multiple commands.
 
 # Installation
 Assumes you already have Talon Voice: https://talonvoice.com/
