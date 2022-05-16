@@ -23,6 +23,18 @@ The command will be repeated once, and can be repeated further using your normal
 There is also a command to close the clipboard early:
 'command clipboard close'
 
+You can repeat a range of commands using 'range clip <number_small> to <number_small>'
+'range clip three to five'
+
+You can repeat any number of clipped commands using 'multi clip <number_small> (and <number_small>)*'. This include repeating the same command multiple times by saying the same number multiple times.
+'multi clip one and one and three and four and seven'
+
+You can save any number of clipped commands into a macro to repeat later using 'macro clip <number_small> (and <number_small>)*'. This include repeating the same command multiple times by saying the same number multiple times.
+'macro clip one and five and one and eight'
+
+Play a saved macro (repeating each saved command) using 'clip macro [play]'
+'clip macro'
+
 # Settings
 You can use the following settings to customize how this tool functions. You can refer to the unofficial talon wiki for how [talon settings](https://talon.wiki/unofficial_talon_docs/#settings) work.
 - `command_clipboard_max_length` the maximum number of items to record and display in the command clipboard
