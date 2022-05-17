@@ -47,6 +47,20 @@ def gui(gui: imgui.GUI):
             actions.user.command_clipboard_repeat_command(command)
             if setting_auto_close.get():
                 actions.user.command_clipboard_disable()
+                
+@imgui.open(y=0, x=0)
+def macro_gui(gui: imgui.GUI):
+    global macro
+    gui.text("Macro commands:")
+    gui.line()
+    index = 0
+    for command in macro:
+        text = actions.user.command_clipboard_transform_phrase_text(command)
+        index += 1
+        if text is not None and gui.button('{}. {}'.format(index, text)):
+            actions.user.command_clipboard_repeat_command(command)
+            if setting_auto_close.get():
+                actions.user.command_clipboard_disable()
 
 
 def fn(d):
@@ -69,19 +83,18 @@ class Actions:
             gui.hide()
         else:
             gui.show()
+            
+    def command_clipboard_toggle_macro_gui():
+        """Toggles viewing the macro gui"""
+        if macro_gui.showing:
+            macro_gui.hide()
+        else:
+            macro_gui.show()
 
     def command_clipboard_repeat_command(words: List[str]):
         """Repeat the chosen command"""
         actions.mimic(words)
 
-    def command_clipboard_repeat_number(number: int):
-        """Repeat the command with the specified number"""
-        if 0 < number < len(command_clipboard):
-            # we don't subtract one from the number to get the index because the clip command becomes the new index 0
-            actions.user.command_clipboard_repeat_command(command_clipboard[number])
-            if setting_auto_close.get():
-                actions.user.command_clipboard_disable()
-                
     def command_clipboard_repeat_range(range_start: int, range_end: int):
         """Repeat a range of commands from the clipboard"""
         if 0 < range_start < len(command_clipboard) and 0 < range_end < len(command_clipboard):
@@ -95,17 +108,30 @@ class Actions:
                 actions.user.command_clipboard_repeat_command(command)
                 
     def command_clipboard_repeat_multi(number_list: List[int]):
-        """Repeat any number of commands from the clipboard in the order that they were given"""
+        """Repeat one or more commands from the clipboard in the order that they were given"""
         if all(0 < index < len(command_clipboard) for index in number_list):
             command_list = [command_clipboard[index] for index in number_list]
             for command in command_list:
                 actions.user.command_clipboard_repeat_command(command)
+            if setting_auto_close.get():
+                actions.user.command_clipboard_disable()
                 
-    def command_clipboard_record_macro(number_list: List[int]):
-        """Save any number of commands from the clipboard into a macro to replay later"""
+    def command_clipboard_update_macro(number_list: List[int]):
+        """Add one or more commands from the clipboard to the end of the macro"""
         global macro
         if all(0 < index < len(command_clipboard) for index in number_list):
-            macro = [command_clipboard[index] for index in number_list]
+            macro += [command_clipboard[index] for index in number_list]
+    
+    def command_clipboard_trim_macro(number_list: List[int]):
+        """Remove one or more commands from the macro by their macro index"""
+        global macro
+        if all(0 < index < len(macro) for index in number_list):
+            macro = [command for index, command in enumerate(macro) if index not in number_list]
+            
+    def command_clipboard_reset_macro():
+        """Clear all commands from the macro"""
+        global macro
+        macro = []
 
     def command_clipboard_play_macro():
         """Replay the recorded macro"""
