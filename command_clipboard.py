@@ -1,7 +1,26 @@
 from typing import List, Optional
 from talon import actions, Module, speech_system, imgui
+from typing import Dict
+import time
 
 mod = Module()
+
+@mod.capture(rule="[slow] <number_small>")
+def clip_number(m) -> str:
+    return {
+        "slow": "slow" in m,
+        "number": m.number_small
+    }
+
+@mod.capture(rule="<clip_number> | <clip_number> to <clip_number>")
+def clip_range(m) -> str:
+    clip_numbers = m.clip_number_list
+    if not "to" in m:
+        return clip_numbers[0]
+
+@mod.capture(rule="<clip_number> (and <user.>)*")
+def clip_set(m) -> dict:
+    return m.clip_number_list
 
 command_clipboard = []
 macro = []
@@ -55,10 +74,10 @@ def macro_gui(gui: imgui.GUI):
     gui.line()
     index = 0
     for command in macro:
-        text = actions.user.command_clipboard_transform_phrase_text(command)
+        text = actions.user.command_clipboard_transform_phrase_text(command["command"])
         index += 1
         if text is not None and gui.button('{}. {}'.format(index, text)):
-            actions.user.command_clipboard_repeat_command(command)
+            actions.user.command_clipboard_repeat_command(command["command"])
             if setting_auto_close.get():
                 actions.user.command_clipboard_disable()
 
@@ -107,22 +126,24 @@ class Actions:
             for command in temporary_array:
                 actions.user.command_clipboard_repeat_command(command)
                 
-    def command_clipboard_repeat_multi(number_list: List[int]):
+    def command_clipboard_repeat_multi(clip_list: list[dict[str, int]]):
         """Repeat one or more commands from the clipboard in the order that they were given"""
-        if all(0 < index < len(command_clipboard) for index in number_list):
-            command_list = [command_clipboard[index] for index in number_list]
+        if all(0 < clip["number"] < len(command_clipboard) for clip in clip_list):
+            command_list = [ { "slow": clip["slow"], "command": command_clipboard[clip["number"]] } for clip in clip_list]
             for command in command_list:
-                actions.user.command_clipboard_repeat_command(command)
+                if command["slow"]:
+                    time.sleep(0.5)
+                actions.user.command_clipboard_repeat_command(command["command"])
             if setting_auto_close.get():
                 actions.user.command_clipboard_disable()
-                
-    def command_clipboard_update_macro(number_list: List[int]):
+    
+    def command_clipboard_update_macro(clip_list: list[dict[str, int]]):
         """Add one or more commands from the clipboard to the end of the macro"""
         global macro
-        if all(0 < index < len(command_clipboard) for index in number_list):
-            macro += [command_clipboard[index] for index in number_list]
+        if all(0 < clip["number"] < len(command_clipboard) for clip in clip_list):
+            macro += [ { "slow": clip["slow"], "command": command_clipboard[clip["number"]] } for clip in clip_list]
     
-    def command_clipboard_trim_macro(number_list: List[int]):
+    def command_clipboard_trim_macro(number_list: list[int]):
         """Remove one or more commands from the macro by their macro index"""
         global macro
         if all(0 < index < len(macro) for index in number_list):
@@ -136,7 +157,9 @@ class Actions:
     def command_clipboard_play_macro():
         """Replay the recorded macro"""
         for command in macro:
-                actions.user.command_clipboard_repeat_command(command)
+            if command["slow"]:
+                    time.sleep(0.5)
+            actions.user.command_clipboard_repeat_command(command["command"])
 
     def history_append_command(words: List[str]):
         """Appends a command to the command clipboard; called when a voice command is uttered"""
