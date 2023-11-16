@@ -1,40 +1,40 @@
 from typing import List, Optional
-from talon import actions, Module, speech_system, imgui
+from talon import actions, Module, speech_system, imgui, settings
 
 mod = Module()
 
 command_clipboard = []
 macro = []
 
-setting_max_length = mod.setting(
+mod.setting(
     "command_clipboard_max_length",
     type=int,
     default=10,
     desc="the maximum number of items to record and display in the command clipboard",
 )
 
-setting_y_position = mod.setting(
+mod.setting(
     "command_clipboard_y_position",
     type=int,
     default=0,
     desc="the y position of where to display the clipboard. 0 (the default) is the top of the screen",
 )
 
-setting_x_position = mod.setting(
+mod.setting(
     "command_clipboard_x_position",
     type=int,
     default=0,
     desc="the x position of where to display the clipboard. 0 (the default) is the far left of the screen",
 )
 
-setting_auto_close = mod.setting(
+mod.setting(
     "command_clipboard_auto_close",
     type=int,
     default=1,
     desc="whether or not the clipboard should automatically close when a command is selected. 0 for false, any other number for true",
 )
 
-@imgui.open(y=setting_y_position.get(), x=setting_x_position.get())
+@imgui.open(y=settings.get('user.command_clipboard_y_position'), x=settings.get('user.command_clipboard_x_position'))
 def gui(gui: imgui.GUI):
     global command_clipboard
     gui.text("Command Clipboard")
@@ -45,7 +45,7 @@ def gui(gui: imgui.GUI):
         index += 1
         if text is not None and gui.button('{}. {}'.format(index, text)):
             actions.user.command_clipboard_repeat_command(command)
-            if setting_auto_close.get():
+            if settings.get('user.command_clipboard_auto_close'):
                 actions.user.command_clipboard_disable()
                 
 @imgui.open(y=0, x=0)
@@ -59,7 +59,7 @@ def macro_gui(gui: imgui.GUI):
         index += 1
         if text is not None and gui.button('{}. {}'.format(index, text)):
             actions.user.command_clipboard_repeat_command(command)
-            if setting_auto_close.get():
+            if settings.get('user.command_clipboard_auto_close'):
                 actions.user.command_clipboard_disable()
 
 
@@ -113,7 +113,7 @@ class Actions:
             command_list = [command_clipboard[index] for index in number_list]
             for command in command_list:
                 actions.user.command_clipboard_repeat_command(command)
-            if setting_auto_close.get():
+            if settings.get('user.command_clipboard_auto_close'):
                 actions.user.command_clipboard_disable()
                 
     def command_clipboard_update_macro(number_list: List[int]):
@@ -141,7 +141,7 @@ class Actions:
     def history_append_command(words: List[str]):
         """Appends a command to the command clipboard; called when a voice command is uttered"""
         command_clipboard.insert(0, words)
-        if len(command_clipboard) > setting_max_length.get():
+        if len(command_clipboard) > settings.get('user.command_clipboard_max_length'):
             command_clipboard.pop()
 
     def command_clipboard_transform_phrase_text(words: list[str]) -> Optional[str]:
