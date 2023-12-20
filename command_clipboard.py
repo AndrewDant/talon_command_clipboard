@@ -37,6 +37,8 @@ mod.setting(
 @imgui.open(y=settings.get('user.command_clipboard_y_position'), x=settings.get('user.command_clipboard_x_position'))
 def gui(gui: imgui.GUI):
     global command_clipboard
+    gui.x = settings.get('user.command_clipboard_x_position')
+    gui.y = settings.get('user.command_clipboard_y_position')
     gui.text("Command Clipboard")
     gui.line()
     index = 0
