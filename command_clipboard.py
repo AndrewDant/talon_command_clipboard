@@ -1,5 +1,5 @@
 from typing import List, Optional
-from talon import actions, Module, speech_system, imgui, settings
+from talon import actions, Module, speech_system, imgui, settings, clip
 
 mod = Module()
 
@@ -150,3 +150,19 @@ class Actions:
         """Transforms phrase text for presentation in command clipboard. Return `None` to omit from history"""
 
         return ' '.join(words) if words else None
+        
+    def command_clipboard_copy_macro():
+        """Copy all commands from the macro into the clipboard"""
+        global macro
+        text = ""
+        for command in macro:
+            text += ' '.join(command) + '\n'
+        
+        if text:
+            actions.clip.set_text(text)
+
+    def command_clipboard_save_macro():
+        """Save the currently selected text as the new macro, with line brakes breaking up commands"""
+        global macro
+        text = actions.edit.selected_text()
+        macro = text.split('\n')
