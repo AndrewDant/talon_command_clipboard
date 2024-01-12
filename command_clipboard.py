@@ -127,8 +127,8 @@ class Actions:
     def command_clipboard_trim_macro(number_list: List[int]):
         """Remove one or more commands from the macro by their macro index"""
         global macro
-        if all(0 < index < len(macro) for index in number_list):
-            macro = [command for index, command in enumerate(macro) if index not in number_list]
+        if all(0 < index <= len(macro) for index in number_list):
+            macro = [command for index, command in enumerate(macro) if index + 1 not in number_list]
             
     def command_clipboard_reset_macro():
         """Clear all commands from the macro"""
