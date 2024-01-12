@@ -165,4 +165,4 @@ class Actions:
         """Save the currently selected text as the new macro, with line brakes breaking up commands"""
         global macro
         text = actions.edit.selected_text()
-        macro = text.split('\n')
+        macro = [line.split() for line in text.split('\n')]
