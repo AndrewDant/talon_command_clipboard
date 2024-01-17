@@ -37,8 +37,6 @@ mod.setting(
 @imgui.open(y=settings.get('user.command_clipboard_y_position'), x=settings.get('user.command_clipboard_x_position'))
 def gui(gui: imgui.GUI):
     global command_clipboard
-    gui.x = settings.get('user.command_clipboard_x_position')
-    gui.y = settings.get('user.command_clipboard_y_position')
     gui.text("Command Clipboard")
     gui.line()
     index = 0
@@ -84,6 +82,8 @@ class Actions:
         if gui.showing:
             gui.hide()
         else:
+            gui.x = settings.get('user.command_clipboard_x_position')
+            gui.y = settings.get('user.command_clipboard_y_position')
             gui.show()
             
     def command_clipboard_toggle_macro_gui():
