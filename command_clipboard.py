@@ -111,8 +111,9 @@ class Actions:
                 
     def command_clipboard_repeat_multi(number_list: List[int]):
         """Repeat one or more commands from the clipboard in the order that they were given"""
-        if all(0 < index < len(command_clipboard) for index in number_list):
-            command_list = [command_clipboard[index] for index in number_list]
+        if all(0 < index < len(command_clipboard) + 1 for index in number_list):
+            # the clipboard is not zero indexed
+            command_list = [command_clipboard[index - 1] for index in number_list]
             for command in command_list:
                 actions.user.command_clipboard_repeat_command(command)
             if settings.get('user.command_clipboard_auto_close'):
