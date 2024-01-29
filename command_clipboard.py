@@ -143,9 +143,10 @@ class Actions:
 
     def history_append_command(words: List[str]):
         """Appends a command to the command clipboard; called when a voice command is uttered"""
-        command_clipboard.insert(0, words)
-        if len(command_clipboard) > settings.get('user.command_clipboard_max_length'):
-            command_clipboard.pop()
+        if not words[0] == 'clip':
+            command_clipboard.insert(0, words)
+            if len(command_clipboard) > settings.get('user.command_clipboard_max_length'):
+                command_clipboard.pop()
 
     def command_clipboard_transform_phrase_text(words: list[str]) -> Optional[str]:
         """Transforms phrase text for presentation in command clipboard. Return `None` to omit from history"""

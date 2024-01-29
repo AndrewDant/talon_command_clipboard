@@ -53,5 +53,3 @@ You cannot repeat a 'clip' command
 
 # Working Items
 Ignore duplicate commands?
-
-It causes a recursion error when we try to repeat a clip command, we either need a work around or to filter them from the list
