@@ -46,6 +46,7 @@ You can use the following settings to customize how this tool functions. You can
 - `command_clipboard_max_length` the maximum number of items to record and display in the command clipboard
 - `command_clipboard_y_position` the y position of where to display the clipboard. 0 (the default) is the top of the screen
 - `command_clipboard_x_position` the x position of where to display the clipboard. 0 (the default) is the far left of the screen
+- `command_clipboard_macro_offset` the x offset for the macro relative to the command clipboard. Positive numbers move it right, negative move it left.
 - `command_clipboard_auto_close` whether or not the clipboard should automatically close when a command is selected. 0 for false, any other number for true
 
 # Limitations

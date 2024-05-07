@@ -28,6 +28,13 @@ mod.setting(
 )
 
 mod.setting(
+    "command_clipboard_macro_offset",
+    type=int,
+    default=500,
+    desc="the x offset for the macro relative to the command clipboard. Positive numbers move it right, negative move it left",
+)
+
+mod.setting(
     "command_clipboard_auto_close",
     type=int,
     default=1,
@@ -91,6 +98,7 @@ class Actions:
         if macro_gui.showing:
             macro_gui.hide()
         else:
+            macro_gui.x = gui.x + settings.get('user.command_clipboard_macro_offset')
             macro_gui.show()
 
     def command_clipboard_repeat_command(words: List[str]):
