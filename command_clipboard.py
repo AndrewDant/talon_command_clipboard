@@ -165,7 +165,7 @@ class Actions:
         """Replay the recorded macro"""
         for command in macro:
                 actions.user.command_clipboard_repeat_command(command)
-                actions.sleep("50ms")
+                actions.sleep("250ms")
 
     def history_append_command(words: List[str]):
         """Appends a command to the command clipboard; called when a voice command is uttered"""
