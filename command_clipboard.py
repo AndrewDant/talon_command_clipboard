@@ -107,12 +107,15 @@ class Actions:
 
     def command_clipboard_repeat_range(range_start: int, range_end: int):
         """Repeat a range of commands from the clipboard"""
-        if 0 < range_start < len(command_clipboard) and 0 < range_end < len(command_clipboard):
-            if range_start > range_end:
-                temporary_array = command_clipboard[range_end:range_start + 1]
+        range_start_index = range_start - 1
+        range_end_index = range_end - 1
+        
+        if 0 <= range_start_index < len(command_clipboard) and 0 <= range_end_index < len(command_clipboard):
+            if range_start_index > range_end_index:
+                temporary_array = command_clipboard[range_end_index:range_start_index + 1]
                 temporary_array.reverse()
             else:
-                temporary_array = command_clipboard[range_start:range_end + 1]
+                temporary_array = command_clipboard[range_start_index:range_end_index + 1]
             
             for command in temporary_array:
                 actions.user.command_clipboard_repeat_command(command)
@@ -130,8 +133,22 @@ class Actions:
     def command_clipboard_update_macro(number_list: List[int]):
         """Add one or more commands from the clipboard to the end of the macro"""
         global macro
-        if all(0 < index < len(command_clipboard) for index in number_list):
-            macro += [command_clipboard[index] for index in number_list]
+        if all(0 < index - 1 < len(command_clipboard) for index in number_list):
+            macro += [command_clipboard[index - 1] for index in number_list]
+
+    def command_clipboard_update_macro_range(range_start: int, range_end: int):
+        """Add a range of commands from the clipboard to the end of the macro"""
+        range_start_index = range_start - 1
+        range_end_index = range_end - 1
+        global macro
+        if 0 <= range_start_index < len(command_clipboard) and 0 <= range_end_index < len(command_clipboard):
+            if range_start_index > range_end_index:
+                temporary_array = command_clipboard[range_end_index:range_start_index + 1]
+                temporary_array.reverse()
+            else:
+                temporary_array = command_clipboard[range_start_index:range_end_index + 1]
+            
+            macro += temporary_array
     
     def command_clipboard_trim_macro(number_list: List[int]):
         """Remove one or more commands from the macro by their macro index"""
@@ -148,6 +165,7 @@ class Actions:
         """Replay the recorded macro"""
         for command in macro:
                 actions.user.command_clipboard_repeat_command(command)
+                actions.sleep("50ms")
 
     def history_append_command(words: List[str]):
         """Appends a command to the command clipboard; called when a voice command is uttered"""
