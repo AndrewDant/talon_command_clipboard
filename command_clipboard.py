@@ -77,6 +77,8 @@ def fn(d):
 
 speech_system.register("pre:phrase", fn)
 
+def all_indices_in_range(number_list, zero_indexed_array):
+        return all(0 <= index - 1 < len(zero_indexed_array) for index in number_list)
 
 @mod.action_class
 class Actions:
@@ -107,22 +109,20 @@ class Actions:
 
     def command_clipboard_repeat_range(range_start: int, range_end: int):
         """Repeat a range of commands from the clipboard"""
-        range_start_index = range_start - 1
-        range_end_index = range_end - 1
         
-        if 0 <= range_start_index < len(command_clipboard) and 0 <= range_end_index < len(command_clipboard):
-            if range_start_index > range_end_index:
-                temporary_array = command_clipboard[range_end_index:range_start_index + 1]
+        if all_indices_in_range([range_start, range_end], command_clipboard):
+            if range_start > range_end:
+                temporary_array = command_clipboard[range_end - 1 : range_start]
                 temporary_array.reverse()
             else:
-                temporary_array = command_clipboard[range_start_index:range_end_index + 1]
+                temporary_array = command_clipboard[range_start - 1 : range_end]
             
             for command in temporary_array:
                 actions.user.command_clipboard_repeat_command(command)
                 
     def command_clipboard_repeat_multi(number_list: List[int]):
         """Repeat one or more commands from the clipboard in the order that they were given"""
-        if all(0 < index < len(command_clipboard) + 1 for index in number_list):
+        if all_indices_in_range(number_list, command_clipboard):
             # the clipboard is not zero indexed
             command_list = [command_clipboard[index - 1] for index in number_list]
             for command in command_list:
@@ -130,30 +130,34 @@ class Actions:
             if settings.get('user.command_clipboard_auto_close'):
                 actions.user.command_clipboard_disable()
                 
+    def command_clipboard_trim_commands(number_list: List[int]):
+        """Remove one or more commands from the clipboard by their index"""
+        global command_clipboard
+        if all_indices_in_range(number_list, command_clipboard):
+            command_clipboard = [command for index, command in enumerate(command_clipboard) if index + 1 not in number_list]
+                
     def command_clipboard_update_macro(number_list: List[int]):
         """Add one or more commands from the clipboard to the end of the macro"""
         global macro
-        if all(0 < index - 1 < len(command_clipboard) for index in number_list):
+        if all_indices_in_range(number_list, command_clipboard):
             macro += [command_clipboard[index - 1] for index in number_list]
 
     def command_clipboard_update_macro_range(range_start: int, range_end: int):
         """Add a range of commands from the clipboard to the end of the macro"""
-        range_start_index = range_start - 1
-        range_end_index = range_end - 1
         global macro
-        if 0 <= range_start_index < len(command_clipboard) and 0 <= range_end_index < len(command_clipboard):
-            if range_start_index > range_end_index:
-                temporary_array = command_clipboard[range_end_index:range_start_index + 1]
+        if all_indices_in_range([range_start, range_end], command_clipboard):
+            if range_start > range_end:
+                temporary_array = command_clipboard[range_end - 1 : range_start]
                 temporary_array.reverse()
             else:
-                temporary_array = command_clipboard[range_start_index:range_end_index + 1]
+                temporary_array = command_clipboard[range_start - 1 : range_end]
             
             macro += temporary_array
     
     def command_clipboard_trim_macro(number_list: List[int]):
         """Remove one or more commands from the macro by their macro index"""
         global macro
-        if all(0 < index <= len(macro) for index in number_list):
+        if all_indices_in_range(number_list, macro):
             macro = [command for index, command in enumerate(macro) if index + 1 not in number_list]
             
     def command_clipboard_reset_macro():
