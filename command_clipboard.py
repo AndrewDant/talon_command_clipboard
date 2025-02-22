@@ -41,7 +41,7 @@ mod.setting(
     desc="whether or not the clipboard should automatically close when a command is selected. 0 for false, any other number for true",
 )
 
-@imgui.open(y=settings.get('user.command_clipboard_y_position'), x=settings.get('user.command_clipboard_x_position'))
+@imgui.open(y=settings.get('user.command_clipboard_y_position', 0), x=settings.get('user.command_clipboard_x_position', 0))
 def gui(gui: imgui.GUI):
     global command_clipboard
     gui.text("Command Clipboard")
