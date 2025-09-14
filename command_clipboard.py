@@ -1,5 +1,5 @@
 from typing import List, Optional
-from talon import actions, Module, speech_system, imgui, settings, clip
+from talon import actions, Module, speech_system, imgui, settings, app
 
 mod = Module()
 
@@ -38,7 +38,14 @@ mod.setting(
     "command_clipboard_auto_close",
     type=int,
     default=1,
-    desc="whether or not the clipboard should automatically close when a command is selected. 0 for false, any other number for true",
+    desc="whether or not the clipboard should automatically close when a command is selected. 0 for false, any other number for true (defaults to true to match the behavior of windows clipboard history)",
+)
+
+mod.setting(
+    "command_clipboard_on_startup",
+    type=int,
+    default=0,
+    desc="whether or not the clipboard should open automatically when talon starts. 0 for false, any other number for true. (defaults to 0)",
 )
 
 @imgui.open(y=settings.get('user.command_clipboard_y_position', 0), x=settings.get('user.command_clipboard_x_position', 0))
@@ -85,15 +92,19 @@ class Actions:
     def command_clipboard_disable():
         """Disables the command clipboard"""
         gui.hide()
+        
+    def command_clipboard_enable():
+        """Enables the command clipboard"""
+        gui.x = settings.get('user.command_clipboard_x_position')
+        gui.y = settings.get('user.command_clipboard_y_position')
+        gui.show()
 
     def command_clipboard_toggle():
         """Toggles viewing the command clipboard"""
         if gui.showing:
-            gui.hide()
+            actions.user.command_clipboard_disable()
         else:
-            gui.x = settings.get('user.command_clipboard_x_position')
-            gui.y = settings.get('user.command_clipboard_y_position')
-            gui.show()
+            actions.user.command_clipboard_enable()
             
     def command_clipboard_toggle_macro_gui():
         """Toggles viewing the macro gui"""
@@ -198,3 +209,11 @@ class Actions:
         global macro
         text = actions.edit.selected_text()
         macro = [line.split() for line in text.split('\n')]
+
+
+# Open the command clipboard on talon start if the setting is configured
+def on_ready():
+    if settings.get('user.command_clipboard_on_startup', 0) != 0:
+        actions.user.command_clipboard_enable()
+
+app.register("launch", on_ready)
